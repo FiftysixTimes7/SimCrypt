@@ -9,12 +9,14 @@ from cryptography.hazmat.primitives.kdf.hkdf import HKDF
 from cryptography.hazmat.primitives.kdf.pbkdf2 import PBKDF2HMAC
 from cryptography.hazmat.primitives.serialization import Encoding, PublicFormat
 
+__version__ = '0.1.0'
+
 
 def x25519_key_gen():
     private = X25519PrivateKey.generate()
     public = private.public_key().public_bytes(
-        Encoding.Raw, PublicFormat.Raw).hex()
-    return private, public
+        Encoding.Raw, PublicFormat.Raw)
+    return private, public.hex().strip()
 
 
 def x25519_key_derive(private, peer):
@@ -28,7 +30,7 @@ def x25519_key_derive(private, peer):
         info=b'exchange',
         backend=default_backend()
     ).derive(shared)
-    return derived_key
+    return derived_key.hex().strip()
 
 
 def aes128_encrypt(password: str, data: str):
@@ -41,7 +43,7 @@ def aes128_encrypt(password: str, data: str):
     ).derive(password.encode()))
     f = Fernet(key)
     token = f.encrypt(data.encode())
-    return token
+    return token.strip()
 
 
 def aes128_decrypt(password: str, token: str):
@@ -58,7 +60,7 @@ def aes128_decrypt(password: str, token: str):
 
 
 def base64_encode(data: str):
-    return base64.encodebytes(data.encode()).decode()
+    return base64.encodebytes(data.encode()).decode().strip()
 
 
 def base64_decode(data: str):
